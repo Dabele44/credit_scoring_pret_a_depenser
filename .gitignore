@@ -1,0 +1,50 @@
+# Fichiers de configuration et caches
+**/.anaconda/
+**/.conda/
+**/.condarc
+**/.continuum/
+**/.docker/
+**/.ipython/
+**/.jupyter/
+**/.keras/
+**/.matplotlib/
+**/.spyder-py3/
+**/.cache/
+**/AppData/
+**/Local Settings/
+**/Cookies/
+**/NTUSER.*
+**/ntuser.ini
+**/ntuser.dat.LOG*
+
+# Dossiers système Windows
+/Application Data/
+/Cookies/
+/Local Settings/
+/Menu Démarrer/
+/Mes documents/
+/Modèles/
+/Recent/
+/SendTo/
+/Voisinage d'impression/
+/Voisinage réseau/
+
+# Autres dossiers et fichiers spécifiques
+/Documents/
+/Downloads/
+/Favorites/
+/Links/
+/Music/
+/OneDrive/
+/Saved Games/
+/Searches/
+/Videos/
+
+# Fichiers et dossiers de projet spécifiques
+**/.ipynb_checkpoints/
+**/*.csv
+**/*.xlsx
+**/*.docx
+**/*.pdf
+**/*.pptx
+**/*.html
