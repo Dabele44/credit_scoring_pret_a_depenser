@@ -80,7 +80,8 @@ if st.button("Predict"):
     prediction = loaded_model.predict(input_data)
     
     # Générer et afficher le graphique SHAP
-    st_shap(generate_shap_waterfall(lgbm_model, input_data, input_data.columns),400)
+    fig = generate_shap_waterfall(lgbm_model, input_data, input_data.columns)
+    st.pyplot(fig)
     
 
     # Afficher les résultats
