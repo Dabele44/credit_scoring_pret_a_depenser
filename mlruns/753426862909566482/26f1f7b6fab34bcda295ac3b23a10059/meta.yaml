@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/belou/Projet%207%20bis/input/mlruns/753426862909566482/26f1f7b6fab34bcda295ac3b23a10059/artifacts
+end_time: 1719588014535
+entry_point_name: ''
+experiment_id: '753426862909566482'
+lifecycle_stage: active
+run_id: 26f1f7b6fab34bcda295ac3b23a10059
+run_name: illustrious-slug-966
+run_uuid: 26f1f7b6fab34bcda295ac3b23a10059
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1719587991814
+status: 3
+tags: []
+user_id: belou
