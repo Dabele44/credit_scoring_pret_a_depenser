@@ -7,8 +7,11 @@ from mlflow.tracking import MlflowClient
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import os
+
 
 mlflow.set_tracking_uri(uri="http://127.0.0.1:8080")
+github_token = os.getenv('GITHUB_TOKEN')
 
 # run_id
 run_id = "5f3f18e7487f41a592b94d6a228c2fac"
