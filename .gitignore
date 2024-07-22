@@ -42,7 +42,13 @@
 
 # Fichiers et dossiers de projet spécifiques
 **/.ipynb_checkpoints/
+
+# Exclure tous les fichiers CSV
 **/*.csv
+
+# Sauf ce fichier spécifique
+!reconstituted_test.csv
+
 **/*.xlsx
 **/*.docx
 **/*.pdf
