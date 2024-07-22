@@ -7,12 +7,16 @@ import joblib
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import imblearn
 
 
 
 
 # Chargement du modèle
-model = joblib.load("credit_scoring.joblib")
+model_pipeline = joblib.load("credit_scoring.joblib")
+
+# Extraire le modèle LGBM de la pipeline
+model = model_pipeline.named_steps['model']
 
 # Charger les données de test reconstituées
 data_path = 'reconstituted_test.csv'
@@ -20,7 +24,7 @@ test_data = pd.read_csv(data_path)
 
 # Fonction pour générer des prédictions
 def generate_predictions(input_data, threshold):
-    prediction_proba = model.predict_proba(input_data)[:, 1]
+    prediction_proba = model_pipeline.predict_proba(input_data)[:, 1]
     prediction_proba = np.round(prediction_proba, 2)
     prediction = (prediction_proba >= threshold).astype(int)
     return prediction_proba, prediction
