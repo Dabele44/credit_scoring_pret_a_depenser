@@ -35,7 +35,7 @@ def display_shap_values(model, input_data):
     individual_shap = explainer.shap_values(input_data)
     predicted_class = prediction[0]
     shap_values_for_class = individual_shap[predicted_class]
-    shap.initjs()
+    # shap.initjs()
     plt.figure(figsize=(25, 10))  # Augmenter la taille de la figure
     shap.waterfall_plot(shap.Explanation(values=shap_values_for_class[0], 
                                           base_values=explainer.expected_value[predicted_class], 
