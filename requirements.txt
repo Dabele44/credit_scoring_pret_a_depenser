@@ -5,3 +5,4 @@ shap
 mlflow
 matplotlib
 plotly
+imblearn
