@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1721663157512
+current_stage: None
+description: ''
+last_updated_timestamp: 1721663157512
+name: scoring-credit-lgbm_classifier
+run_id: 336b2c5b09c342df8768fb4f54e17590
+run_link: ''
+source: file:///C:/Users/belou/Projet%207%20bis/input/mlruns/753426862909566482/336b2c5b09c342df8768fb4f54e17590/artifacts/lgbm_classifier_model
+status: READY
+status_message: null
+storage_location: file:///C:/Users/belou/Projet%207%20bis/input/mlruns/753426862909566482/336b2c5b09c342df8768fb4f54e17590/artifacts/lgbm_classifier_model
+user_id: null
+version: 2
