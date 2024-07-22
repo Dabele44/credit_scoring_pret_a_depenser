@@ -6,3 +6,4 @@ mlflow
 matplotlib
 plotly
 imblearn
+lightgbm
