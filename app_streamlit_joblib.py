@@ -13,7 +13,7 @@ import imblearn
 
 
 # Chargement du modèle
-model_pipeline = joblib.load("credit_scoring.joblib")
+model_pipeline = joblib.load("credit_scoring_new.joblib")
 
 # Extraire le modèle LGBM de la pipeline
 model = model_pipeline.named_steps['model']
