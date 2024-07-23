@@ -47,7 +47,7 @@
 **/*.csv
 
 # Sauf ce fichier spécifique
-!reconstituted_test.csv
+!reconstituted_test_sampled.csv
 
 **/*.xlsx
 **/*.docx
