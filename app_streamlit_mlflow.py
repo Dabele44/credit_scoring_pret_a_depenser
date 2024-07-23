@@ -29,7 +29,7 @@ model_uri = f"runs:/{run_id}/{artifact_path}"
 model = mlflow.lightgbm.load_model(model_uri)
 
 # Charger les données de test reconstituées
-data_path = 'reconstituted_test.csv'
+data_path = 'reconstituted_test_sampled.csv'
 test_data = pd.read_csv(data_path)
 
 # Fonction pour générer des prédictions
@@ -43,12 +43,11 @@ def generate_predictions(input_data, threshold):
 def display_shap_values(model, input_data):
     explainer = shap.Explainer(model)
     individual_shap = explainer.shap_values(input_data)
-    predicted_class = prediction[0]
-    shap_values_for_class = individual_shap[predicted_class]
-    shap.initjs()
+    shap_values_for_class_1 = individual_shap[1]
+    # shap.initjs()
     plt.figure(figsize=(25, 10))  # Augmenter la taille de la figure
-    shap.waterfall_plot(shap.Explanation(values=shap_values_for_class[0], 
-                                          base_values=explainer.expected_value[predicted_class], 
+    shap.waterfall_plot(shap.Explanation(values=shap_values_for_class_1[0], 
+                                          base_values=explainer.expected_value[1], 
                                           data=input_data.iloc[0], 
                                           feature_names=input_data.columns.tolist()), show=False)
     st.pyplot(plt, clear_figure=True)  # Ajuster la taille de l'affichage
