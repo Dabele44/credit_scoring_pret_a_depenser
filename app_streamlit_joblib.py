@@ -19,7 +19,7 @@ model_pipeline = joblib.load("credit_scoring_new.joblib")
 model = model_pipeline.named_steps['model']
 
 # Charger les données de test reconstituées
-data_path = 'reconstituted_test.csv'
+data_path = 'reconstituted_test_sampled.csv'
 test_data = pd.read_csv(data_path)
 
 # Fonction pour générer des prédictions
