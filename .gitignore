@@ -5,6 +5,7 @@
 **/images/
 **/mlflow_model/
 **/mlruns
+**/tests_unitaires_doc
 
 # Exclure tous les fichiers CSV
 **/*.csv
