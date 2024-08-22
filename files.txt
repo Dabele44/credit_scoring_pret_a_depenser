@@ -1,0 +1,21 @@
+.gitattributes
+.github/workflows/test.yml
+.gitignore
+"00- Exploration_et_1\303\250res_mod\303\251lisations.ipynb"
+01-Feature_Engineering.ipynb
+02_Feature_Selection.ipynb
+03_Nouvelle_modelisation.ipynb
+04_Evidently.ipynb
+05_Nouvelle_modelisation_sans_drift.ipynb
+README.md
+app_streamlit_joblib.py
+"banni\303\250re.png"
+credit_scoring_new.joblib
+data_drift_report_all.html
+data_drift_report_short.html
+optimal_threshold.txt
+reconstituted_test_sampled.csv
+requirements.txt
+"sch\303\251ma_tables.png"
+to_merge.ipynb
+unit_testing.py
