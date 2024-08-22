@@ -18,3 +18,7 @@
 **/*.pdf
 **/*.pptx
 **/*.html
+
+# Exclure les notebooks spécifiques
+**/Concat_all_NB.ipynb
+**/to_merge.ipynb
