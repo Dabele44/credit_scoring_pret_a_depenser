@@ -90,11 +90,17 @@ Les tests unitaires permettent de garantir la fiabilité du modèle de prédicti
     ```
 
 2. Les tests incluent :
-    - Vérification des formats des données et des colonnes.
-    - Validation des prédictions (valeurs de sortie entre 0 et 1).
-    - Vérification des valeurs **SHAP**.
-    - Test du seuil optimal de 0.09.
-    - Etc.
+    - Vérification du nombre de variables explicatives
+    - Vérification des noms des variables
+    - Vérification des formats des variables
+    - Vérification que le threshold est bien de 0.09
+    - Vérification du format des prédictions de probabilité
+    - Vérification que les prédictions sont bien égales à 0 ou 1
+    - Vérification du format de l'ID du client
+    - Vérification de la longueur de l'ID du client
+    - Vérification du nombre de valeurs SHAP
+    - Vérification que la somme des valeurs SHAP plus le biais est proche de la prédiction à 5 décimales près
+
 
 ## Dépendances
 
