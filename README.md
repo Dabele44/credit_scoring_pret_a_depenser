@@ -14,7 +14,7 @@ Ce projet consiste à créer une application de scoring de crédit pour la soci�
 - [Tests Unitaires](#tests-unitaires)
 - [Dépendances](#dépendances)
 - [Structure du repository](#structure-du-repository)
-- [Auteurs](#auteurs)
+- [Auteur](#auteur)
 
 ## Contenu du projet
 
@@ -142,6 +142,6 @@ Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 ├── unit_testing.py                  # Script contenant les tests unitaires pour valider le modèle
 
 
-## Auteurs
+## Auteur
 Ce projet a été réalisé par Anne BELOUARD. 
 
