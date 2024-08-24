@@ -101,10 +101,9 @@ Les tests unitaires permettent de garantir la fiabilité du modèle de prédicti
     - Vérification du nombre de valeurs SHAP
     - Vérification que la somme des valeurs SHAP plus le biais est proche de la prédiction à 5 décimales près
 
-
 ## Dépendances
 
-Les principales dépendances pour ce projet sont listées dans le fichier `requirements.txt` :
+Les principales dépendances pour ce projet sont listées dans le fichier `requirements.txt` 
 
 - `streamlit==1.36.0`
 - `pandas==2.1.4`
@@ -119,9 +118,9 @@ Les principales dépendances pour ce projet sont listées dans le fichier `requi
 Installez-les en utilisant la commande :
 ```bash
 pip install -r requirements.txt
+```
 
-
-## Dépendances
+## **Structure**
 
 Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 
@@ -147,9 +146,10 @@ Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 ├── schéma_tables.png                # Schéma illustrant les tables de données (si applicable)
 ├── to_merge.ipynb                   # Notebook pour grouper les notebooks en un seul notebook (il est demandé un livrable en un seul notebook)
 ├── unit_testing.py                  # Script contenant les tests unitaires pour valider le modèle
-
+ ```
 
 ## Auteur
 
 Ce projet a été réalisé par Anne BELOUARD. 
+
 
