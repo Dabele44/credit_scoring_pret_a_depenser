@@ -134,15 +134,14 @@ Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 ├── credit_scoring_new.joblib        # Modèle LightGBM sauvegardé après optimisation
 ├── data_drift_report_all.html       # Rapport Evidently sur le Data Drift (pour l'ensemble des variables)
 ├── data_drift_report_short.html     # Rapport Evidently sur le Data Drift (pour un sous-ensemble des variables)
-├── files.txt                        # Fichier texte listant des fichiers utilisés (peut être pour du tracking)
 ├── optimal_threshold.txt            # Fichier contenant le seuil optimal de décision (threshold) utilisé par le modèle
 ├── reconstituted_test_sampled.csv   # Jeu de données de test échantillonné utilisé pour les tests de prédiction
 ├── requirements.txt                 # Fichier contenant la liste des dépendances du projet
 ├── schéma_tables.png                # Schéma illustrant les tables de données (si applicable)
-├── to_merge.ipynb                   # Notebook pour des opérations de fusion de données
+├── to_merge.ipynb                   # Notebook pour grouper les notebooks en un seul notebook (il est demandé un livrable en un seul notebook)
 ├── unit_testing.py                  # Script contenant les tests unitaires pour valider le modèle
 
 
 ## Auteurs
-Ce projet a été réalisé par Anne BELOUARD. Vous pouvez me contacter via belouard@hotmail.com pour toute question.
+Ce projet a été réalisé par Anne BELOUARD. 
 
