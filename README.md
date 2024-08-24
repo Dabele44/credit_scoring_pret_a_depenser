@@ -120,7 +120,8 @@ Installez-les en utilisant la commande :
 ```bash
 pip install -r requirements.txt
 
-## Structure du repository
+
+## Dépendances
 
 Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 
@@ -149,5 +150,6 @@ Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 
 
 ## Auteur
+
 Ce projet a été réalisé par Anne BELOUARD. 
 
