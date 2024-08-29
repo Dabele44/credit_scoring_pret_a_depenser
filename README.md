@@ -14,7 +14,7 @@ Ce projet consiste à créer une application de scoring de crédit pour la soci�
 - [Tests Unitaires](#tests-unitaires)
 - [Dépendances](#dépendances)
 - [Structure du repository](#structure-du-repository)
-- [Auteurs](#auteurs)
+- [Auteur](#auteur)
 
 ## Contenu du projet
 
@@ -90,15 +90,20 @@ Les tests unitaires permettent de garantir la fiabilité du modèle de prédicti
     ```
 
 2. Les tests incluent :
-    - Vérification des formats des données et des colonnes.
-    - Validation des prédictions (valeurs de sortie entre 0 et 1).
-    - Vérification des valeurs **SHAP**.
-    - Test du seuil optimal de 0.09.
-    - Etc.
+    - Vérification du nombre de variables explicatives
+    - Vérification des noms des variables
+    - Vérification des formats des variables
+    - Vérification que le threshold est bien de 0.09
+    - Vérification du format des prédictions de probabilité
+    - Vérification que les prédictions sont bien égales à 0 ou 1
+    - Vérification du format de l'ID du client
+    - Vérification de la longueur de l'ID du client
+    - Vérification du nombre de valeurs SHAP
+    - Vérification que la somme des valeurs SHAP plus le biais est proche de la prédiction à 5 décimales près
 
 ## Dépendances
 
-Les principales dépendances pour ce projet sont listées dans le fichier `requirements.txt` :
+Les principales dépendances pour ce projet sont listées dans le fichier `requirements.txt` 
 
 - `streamlit==1.36.0`
 - `pandas==2.1.4`
@@ -113,8 +118,9 @@ Les principales dépendances pour ce projet sont listées dans le fichier `requi
 Installez-les en utilisant la commande :
 ```bash
 pip install -r requirements.txt
+```
 
-## Structure du repository
+## **Structure**
 
 Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 
@@ -134,15 +140,16 @@ Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
 ├── credit_scoring_new.joblib        # Modèle LightGBM sauvegardé après optimisation
 ├── data_drift_report_all.html       # Rapport Evidently sur le Data Drift (pour l'ensemble des variables)
 ├── data_drift_report_short.html     # Rapport Evidently sur le Data Drift (pour un sous-ensemble des variables)
-├── files.txt                        # Fichier texte listant des fichiers utilisés (peut être pour du tracking)
 ├── optimal_threshold.txt            # Fichier contenant le seuil optimal de décision (threshold) utilisé par le modèle
 ├── reconstituted_test_sampled.csv   # Jeu de données de test échantillonné utilisé pour les tests de prédiction
 ├── requirements.txt                 # Fichier contenant la liste des dépendances du projet
 ├── schéma_tables.png                # Schéma illustrant les tables de données (si applicable)
-├── to_merge.ipynb                   # Notebook pour des opérations de fusion de données
+├── to_merge.ipynb                   # Notebook pour grouper les notebooks en un seul notebook (il est demandé un livrable en un seul notebook)
 ├── unit_testing.py                  # Script contenant les tests unitaires pour valider le modèle
+ ```
 
+## Auteur
 
-## Auteurs
-Ce projet a été réalisé par Anne BELOUARD. Vous pouvez me contacter via belouard@hotmail.com pour toute question.
+Ce projet a été réalisé par Anne BELOUARD. 
+
 
