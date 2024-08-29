@@ -12,7 +12,7 @@ data_path = 'reconstituted_test_sampled.csv'
 test_data = pd.read_csv(data_path)
 
 # Fonction pour interroger l'API pour les prédictions
-def get_predictions_from_api(input_data, api_url="http://127.0.0.1:8000/predict"):
+def get_predictions_from_api(input_data, api_url="https://scorecredit-93521a3704b4.herokuapp.com/predict"):
     response = requests.post(api_url, json={"data": input_data})
     if response.status_code == 200:
         return response.json()
@@ -21,7 +21,7 @@ def get_predictions_from_api(input_data, api_url="http://127.0.0.1:8000/predict"
         return None
 
 # Fonction pour obtenir les valeurs SHAP depuis l'API
-def get_shap_values_from_api(input_data, api_url="http://127.0.0.1:8000/explain"):
+def get_shap_values_from_api(input_data, api_url="https://scorecredit-93521a3704b4.herokuapp.com/explain"):
     response = requests.post(api_url, json={"data": input_data})
     if response.status_code == 200:
         return response.json()['shap_values']
