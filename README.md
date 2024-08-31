@@ -92,7 +92,7 @@ Pour installer et exécuter ce projet localement, suivez les étapes ci-dessous 
 Pour exécuter l'API FastAPI localement :
 
 ```bash
-uvicorn main:app --reload
+uvicorn main:app --host 0.0.0.0 --port 8000 
 ```
 L'API sera disponible à l'adresse [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
