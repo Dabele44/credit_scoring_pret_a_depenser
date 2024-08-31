@@ -1,109 +1,121 @@
-# Credit Scoring - Application de Prédiction de Risque de Crédit
+# API de Scoring de Crédit
 
-**Lien vers le dashboard Streamlit** : [Credit Scoring Dashboard](https://dabele44-credit-scoring-pret-a-depe-app-streamlit-joblib-yq1wpc.streamlit.app/)
-
-Ce projet consiste à créer une application de scoring de crédit pour la société Prêt à Dépenser. L'objectif est de prédire si un client est à risque à partir de ses données personnelles et financières, permettant ainsi à l'entreprise de décider d'accorder ou de refuser le crédit. 
+Ce projet est une application de scoring de crédit qui utilise des modèles de machine learning pour prédire si un client est à risque en se basant sur divers facteurs financiers et personnels. Le projet inclut la création des modèles, la détection de dérive des données, le déploiement de l'API avec FastAPI, ainsi que le test de l'API à la fois localement et après son déploiement sur Heroku.
 
 ## Table des matières
 
-- [Contenu du projet](#contenu-du-projet)
-- [Les données](#les-donnees)
-- [Installation](#installation)
-- [Modèle de Machine Learning](#modèle-de-machine-learning)
-- [API Streamlit](#api-streamlit)
-- [Tests Unitaires](#tests-unitaires)
-- [Dépendances](#dépendances)
-- [Structure du repository](#structure-du-repository)
-- [Auteur](#auteur)
+1. [Aperçu du projet](#aperçu-du-projet)
+2. [Installation](#installation)
+3. [Utilisation](#utilisation)
+    - [Exécuter l'API localement](#exécuter-lapi-localement)
+    - [Déployer l'API sur Heroku](#déployer-lapi-sur-heroku)
+    - [Tester l'API](#tester-lapi)
+    - [Utiliser l'interface Streamlit](#utiliser-linterface-streamlit)
+4. [Formation et évaluation du modèle](#formation-et-évaluation-du-modèle)
+5. [Détection de dérive des données](#détection-de-dérive-des-données)
+6. [Tests unitaires](#tests-unitaires)
+7. [Prérequis](#prérequis)
+8. [Remerciements](#remerciements)
 
-## Contenu du projet
+## Aperçu du projet
 
-Ce projet va au-delà du simple développement d'un modèle de machine learning. En effet, il intègre plusieurs aspects cruciaux du cycle de vie d'un projet de data science, en suivant une démarche **MLOps** (Machine Learning Operations) complète. Les attentes du projet incluent :
+Ce projet consiste à développer un modèle de machine learning pour le scoring de crédit, à le déployer sous forme d'API, et à fournir une interface utilisateur pour l'interaction. L'API est développée en utilisant FastAPI et déployée sur Heroku. Le modèle de machine learning retenu est LightGBM et évalué à l'aide de métriques telles que l'AUC et le rappel.
 
-- **Préparation des données** : Transformation des features et sélection des variables les plus pertinentes.
-- **Modélisation machine learning** : Utilisation d'un modèle de machine leearning, optimisé via GridSearch, pour obtenir des performances prédictives élevées tout en évitant le surapprentissage.
-- **Vérification du Data Drift** : Mise en place d'une analyse de dérive des données (**Data Drift**) entre les jeux de données d'entraînement et de test à l'aide de la bibliothèque **Evidently**. Cette étape est essentielle pour garantir que le modèle reste performant sur de nouvelles données et pour identifier des changements dans les distributions des données.
-- **Explications des prédictions** : Utilisation de la méthode **SHAP** pour fournir des explications détaillées des décisions du modèle, assurant ainsi la transparence et l'explicabilité des prédictions.
-- **Tests unitaires** : Implémentation de tests unitaires pour valider chaque composant du pipeline, garantissant que le modèle fonctionne correctement avec des données nouvelles ou modifiées. Ces tests permettent de vérifier la structure des données, la cohérence des prédictions, et la justesse des valeurs calculées par SHAP.
-- **Déploiement du modèle** : Création d'une interface interactive en utilisant, permettant à l'utilisateur final de soumettre des prédictions en temps réel et de visualiser les explications des décisions du modèle.
-
-En somme, ce projet ne se limite pas à la création d'un modèle prédictif. Il s'inscrit dans une démarche rigoureuse d'industrialisation de la data science, en assurant à la fois la **robustesse** du modèle, la **transparence des prédictions**, et la **facilité de déploiement** et d'**interaction utilisateur**.
-
-## Les données
-
-Données Kaggle : https://www.kaggle.com/c/home-credit-default-risk/data
+Les principaux composants du projet incluent :
+- **Formation du modèle :** Construction et formation d'un modèle LightGBM pour prédire le risque de crédit.
+- **Détection de dérive des données :** Surveillance des données pour détecter des changements dans la distribution des données qui pourraient affecter les performances du modèle.
+- **Développement de l'API :** Création d'une API avec FastAPI pour servir le modèle.
+- **Déploiement :** Déploiement de l'API sur Heroku en utilisant GitHub Actions pour l'intégration continue et le déploiement continu (CI/CD).
+- **Tests et validation :** Tests de l'API localement et après déploiement pour assurer sa fiabilité.
 
 ## Installation
 
-### Prérequis
+Pour installer et exécuter ce projet localement, suivez les étapes ci-dessous :
 
-Assurez-vous que vous avez **Python 3.8 ou plus** installé sur votre machine.
-
-### Étapes d'installation
-
-1. Clonez ce dépôt :
+1. **Cloner le dépôt :**
     ```bash
-    git clone https://github.com/votre-utilisateur/credit_scoring_pret_a_depenser.git
-    cd credit_scoring_pret_a_depenser
+    git clone https://github.com/Dabele44/credit_scoring_pret_a_depenser
+    cd votre-projet
     ```
 
-2. Installez les dépendances requises :
+2. **Créer un environnement virtuel :**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate # sur Windows, utilisez `venv\Scripts\activate`
+    ```
+
+3. **Installer les dépendances :**
     ```bash
     pip install -r requirements.txt
     ```
-    
-## Modèle de Machine Learning
 
-Le modèle utilisé est un **LightGBM Classifier**, une implémentation très performante des méthodes de boosting basée sur les arbres de décision. Il a été choisi pour ce projet en raison de sa capacité à gérer efficacement de grandes quantités de données tout en maintenant de bonnes performances de prédiction. 
+## Utilisation
 
-### Modèle final après optimisation
+### Exécuter l'API localement
 
-Le modèle est stocké dans un fichier `.joblib` et chargé dans l'application Streamlit pour effectuer des prédictions en temps réel.
+Pour exécuter l'API FastAPI localement :
 
-## API Streamlit
+```bash
+uvicorn main:app --reload
+```
+L'API sera disponible à l'adresse [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
-1. Lancer l'API Streamlit en local :
-    ```bash
-    streamlit run app_streamlit_joblib.py
-    ```
+### Déployer l'API sur Heroku
 
-2. Une fois l'application lancée, un onglet de votre navigateur s'ouvrira avec l'application prête à être utilisée. 
-   
-### Fonctionnalités de l'application Streamlit
+Le déploiement de l'API sur Heroku est automatisé via GitHub Actions. Chaque fois que vous poussez des modifications sur la branche `main`, l'API est automatiquement déployée sur Heroku.
 
-- **Sélection de l'ID du client** : Vous pouvez sélectionner un ID client dans le dataset ou entrer manuellement l'ID.
-- **Prédiction du risque** : Le modèle affiche une jauge indiquant la probabilité de risque du client.
-- **Explications SHAP** : Un graphique **waterfall** explique les contributions des principales caractéristiques à la décision de crédit.
+Pour configurer le déploiement :
 
-L'interface est personnalisée avec un style CSS pour améliorer l'expérience utilisateur.
+1. Créez un compte sur Heroku.
+2. Ajoutez les secrets suivants à votre dépôt GitHub (dans les paramètres des Actions GitHub) :
+    - `HEROKU_API_KEY`
+    - `HEROKU_EMAIL`
+    - `HEROKU_APP_NAME`
+
+Le fichier `deploy.yml` est configuré pour déclencher le déploiement sur Heroku chaque fois qu'une modification est poussée sur la branche `main`.
+
+### Tester l'API
+
+Vous pouvez tester l'API localement à l'aide du notebook `test_api.ipynb`. Ce notebook envoie des requêtes à l'API pour vérifier les prédictions et les explications SHAP.
+
+### Utiliser l'interface Streamlit
+
+Pour interagir avec le modèle via une interface graphique, exécutez l'application Streamlit :
+
+```bash
+streamlit run streamlit_app.py
+```
+L'application Streamlit vous permet de visualiser les prédictions du modèle et les valeurs SHAP pour chaque client.
+
+## Création et évaluation du modèle
+
+Le modèle est créé à l'aide de LightGBM sur des données de crédit. Les principales étapes de formation incluent :
+
+- **Préparation des données :** Chargement et nettoyage des données, y compris la gestion des valeurs manquantes et la normalisation des caractéristiques.
+- **Sélection des caractéristiques :** Réduction du nombre de caractéristiques en utilisant, entre autres, l'importance des caractéristiques.
+- **Détection et suppression des variables affectées par la dérive des données :** Surveillance de la dérive des données entre les jeux de données d'entraînement et de test.
+- **Optimisation des hyperparamètres :** Utilisation de GridSearchCV pour trouver les meilleurs hyperparamètres du modèle LightGBM.
+- **Évaluation du modèle :** Évaluation du modèle sur un jeu de données de validation avec des métriques telles que l'AUC et le rappel.
+
+## Détection de dérive des données
+
+Le projet utilise `Evidently AI` pour surveiller la dérive des données entre le jeu de données d'entraînement et le jeu de données de test. Un rapport de dérive est généré pour identifier les caractéristiques qui changent significativement entre ces jeux de données, permettant ainsi de prévenir une dégradation des performances du modèle. 
+
+## Tests unitaires
+
+Des tests unitaires sont fournis pour vérifier :
+
+- **Conformité des données en entrée :** Vérification que les colonnes et les types de données correspondent aux attentes du modèle.
+- **Bon fonctionnement du modèle :** Vérification des sorties du modèle pour s'assurer qu'elles sont correctes.
+- **Intégrité des valeurs SHAP :** Vérification que les valeurs SHAP sont cohérentes avec les prédictions.
+- **Respect du seuil de risque optimal :** Vérification que le seuil de risque est appliqué correctement.
+
+Ces tests peuvent être exécutés à l'aide de `unittest`
 
 
-## Tests Unitaires
+## Prérequis
 
-Les tests unitaires permettent de garantir la fiabilité du modèle de prédiction et de ses différentes composantes. Ils vérifient notamment que les données sont bien formatées, que les prédictions se situent dans des plages valides, et que les valeurs SHAP (expliquant les décisions du modèle) sont correctement calculées. Ces tests sont exécutés avant chaque déploiement afin de garantir que le modèle fonctionne comme attendu.
-
-### Lancement des tests unitaires
-
-1. Pour exécuter les tests unitaires, lancez la commande suivante :
-    ```bash
-    python -m unittest test_model.py
-    ```
-
-2. Les tests incluent :
-    - Vérification du nombre de variables explicatives
-    - Vérification des noms des variables
-    - Vérification des formats des variables
-    - Vérification que le threshold est bien de 0.09
-    - Vérification du format des prédictions de probabilité
-    - Vérification que les prédictions sont bien égales à 0 ou 1
-    - Vérification du format de l'ID du client
-    - Vérification de la longueur de l'ID du client
-    - Vérification du nombre de valeurs SHAP
-    - Vérification que la somme des valeurs SHAP plus le biais est proche de la prédiction à 5 décimales près
-
-## Dépendances
-
-Les principales dépendances pour ce projet sont listées dans le fichier `requirements.txt` 
+Les principales bibliothèques utilisées dans ce projet sont :
 
 - `streamlit==1.36.0`
 - `pandas==2.1.4`
@@ -114,42 +126,19 @@ Les principales dépendances pour ce projet sont listées dans le fichier `requi
 - `plotly==5.22.0`
 - `imblearn==0.0`
 - `lightgbm==4.3.0`
+- `fastapi`
+- `uvicorn`
+- `requests`
+- `pydantic`
 
-Installez-les en utilisant la commande :
+Vous pouvez installer toutes les dépendances nécessaires en utilisant le fichier `requirements.txt` fourni avec ce projet. Pour ce faire, exécutez la commande suivante :
+
 ```bash
 pip install -r requirements.txt
 ```
 
-## **Structure**
+## Remerciements
 
-Ce repository contient plusieurs fichiers et dossiers organisés comme suit :
-
-```bash
-├── .github/workflows/              # Dossier pour les workflows GitHub Actions (CI/CD)
-├── .gitattributes                  # Fichier pour gérer les attributs spécifiques à Git (fin de ligne, etc.)
-├── .gitignore                      # Fichier qui spécifie les fichiers à ignorer par Git
-├── 00_Exploration_et_1ères_modélisations.ipynb    # Notebook pour l'exploration des données et les premières modélisations
-├── 01_Feature_Engineering.ipynb     # Notebook pour le Feature Engineering (création et transformation des variables)
-├── 02_Feature_Selection.ipynb       # Notebook pour la sélection des variables pertinentes
-├── 03_Nouvelle_modelisation.ipynb   # Nouvelle phase de modélisation avec optimisation
-├── 04_Evidently.ipynb               # Notebook pour la vérification du Data Drift avec la librairie Evidently
-├── 05_Nouvelle_modelisation_sans_drift.ipynb  # Modélisation sans les variables ayant montré du Data Drift
-├── README.md                        # Fichier de documentation du projet (ce fichier)
-├── app_streamlit_joblib.py          # Script pour le déploiement de l'application avec Streamlit
-├── bannière.png                     # Image utilisée dans l'interface utilisateur Streamlit
-├── credit_scoring_new.joblib        # Modèle LightGBM sauvegardé après optimisation
-├── data_drift_report_all.html       # Rapport Evidently sur le Data Drift (pour l'ensemble des variables)
-├── data_drift_report_short.html     # Rapport Evidently sur le Data Drift (pour un sous-ensemble des variables)
-├── optimal_threshold.txt            # Fichier contenant le seuil optimal de décision (threshold) utilisé par le modèle
-├── reconstituted_test_sampled.csv   # Jeu de données de test échantillonné utilisé pour les tests de prédiction
-├── requirements.txt                 # Fichier contenant la liste des dépendances du projet
-├── schéma_tables.png                # Schéma illustrant les tables de données (si applicable)
-├── to_merge.ipynb                   # Notebook pour grouper les notebooks en un seul notebook (il est demandé un livrable en un seul notebook)
-├── unit_testing.py                  # Script contenant les tests unitaires pour valider le modèle
- ```
-
-## Auteur
-
-Ce projet a été réalisé par Anne BELOUARD. 
+Merci à OpenClassrooms pour l'inspiration et les bases de ce projet. Un grand merci également à toutes les ressources en ligne et communautés de développeurs qui ont contribué à la réalisation de ce projet.
 
 
