@@ -1,22 +1,26 @@
-# API de Scoring de Crédit
+# Implémentez un modèle de scoring
+Projet n°7 du parcours Data Scientist OpenClassrooms en partenariat avec Centrale Supelec
 
-Ce projet est une application de scoring de crédit qui utilise des modèles de machine learning pour prédire si un client est à risque en se basant sur divers facteurs financiers et personnels. Le projet inclut la création des modèles, la détection de dérive des données, le déploiement de l'API avec FastAPI, ainsi que le test de l'API à la fois localement et après son déploiement sur Heroku.
+Ce projet consiste à créer une application de scoring de crédit qui utilise des modèles de machine learning pour prédire si un client est à risque en se basant sur divers facteurs financiers et personnels. Le projet inclut la création des modèles, la détection de dérive des données, le déploiement de l'API avec FastAPI, ainsi que le test de l'API à la fois localement et après son déploiement sur Heroku.
 
 ## Table des matières
 
 1. [Aperçu du projet](#aperçu-du-projet)
-2. [Contenu du dépôt](#contenu-du-depot)
-3. [Installation](#installation)
-4. [Utilisation](#utilisation)
+2. [Les données](#les-donnees)
+3. [Contenu du dépôt](#contenu-du-depot)
+4. [Installation](#installation)
+5. [Utilisation](#utilisation)
     - [Exécuter l'API localement](#exécuter-lapi-localement)
     - [Déployer l'API sur Heroku](#déployer-lapi-sur-heroku)
     - [Tester l'API](#tester-lapi)
     - [Utiliser l'interface Streamlit](#utiliser-linterface-streamlit)
-5. [Formation et évaluation du modèle](#formation-et-évaluation-du-modèle)
-6. [Détection de dérive des données](#détection-de-dérive-des-données)
-7. [Tests unitaires](#tests-unitaires)
-8. [Prérequis](#prérequis)
-9. [Remerciements](#remerciements)
+6. [Formation et évaluation du modèle](#formation-et-évaluation-du-modèle)
+7. [Détection de dérive des données](#détection-de-dérive-des-données)
+8. [Tests unitaires](#tests-unitaires)
+9. [Prérequis](#prérequis)
+10. [Remerciements](#remerciements)
+11. [Auteur](#auteur)
+
 
 ## Aperçu du projet
 
@@ -29,6 +33,9 @@ Les principaux composants du projet incluent :
 - **Déploiement :** Déploiement de l'API sur Heroku en utilisant GitHub Actions pour l'intégration continue et le déploiement continu (CI/CD).
 - **Tests et validation :** Tests de l'API localement et après déploiement pour assurer sa fiabilité.
 
+## Les données
+
+Données Kaggle : [Home Credit](https://www.kaggle.com/c/home-credit-default-risk/data)
 
 ## Contenu du dépôt
 
@@ -170,4 +177,6 @@ pip install -r requirements.txt
 
 Merci à OpenClassrooms pour l'inspiration et les bases de ce projet. Un grand merci également à toutes les ressources en ligne et communautés de développeurs qui ont contribué à la réalisation de ce projet.
 
+## Auteur
 
+Anne BELOUARD
