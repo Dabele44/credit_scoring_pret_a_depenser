@@ -5,17 +5,18 @@ Ce projet est une application de scoring de crédit qui utilise des modèles de 
 ## Table des matières
 
 1. [Aperçu du projet](#aperçu-du-projet)
-2. [Installation](#installation)
-3. [Utilisation](#utilisation)
+2. [Contenu du dépôt](#contenu-du-depot)
+3. [Installation](#installation)
+4. [Utilisation](#utilisation)
     - [Exécuter l'API localement](#exécuter-lapi-localement)
     - [Déployer l'API sur Heroku](#déployer-lapi-sur-heroku)
     - [Tester l'API](#tester-lapi)
     - [Utiliser l'interface Streamlit](#utiliser-linterface-streamlit)
-4. [Formation et évaluation du modèle](#formation-et-évaluation-du-modèle)
-5. [Détection de dérive des données](#détection-de-dérive-des-données)
-6. [Tests unitaires](#tests-unitaires)
-7. [Prérequis](#prérequis)
-8. [Remerciements](#remerciements)
+5. [Formation et évaluation du modèle](#formation-et-évaluation-du-modèle)
+6. [Détection de dérive des données](#détection-de-dérive-des-données)
+7. [Tests unitaires](#tests-unitaires)
+8. [Prérequis](#prérequis)
+9. [Remerciements](#remerciements)
 
 ## Aperçu du projet
 
@@ -27,6 +28,34 @@ Les principaux composants du projet incluent :
 - **Développement de l'API :** Création d'une API avec FastAPI pour servir le modèle.
 - **Déploiement :** Déploiement de l'API sur Heroku en utilisant GitHub Actions pour l'intégration continue et le déploiement continu (CI/CD).
 - **Tests et validation :** Tests de l'API localement et après déploiement pour assurer sa fiabilité.
+
+
+## Contenu du dépôt
+
+Voici un aperçu des fichiers et dossiers présents dans ce dépôt :
+
+- **`.github/workflows/`** : Contient les fichiers de configuration pour GitHub Actions, utilisés pour l'intégration continue et le déploiement automatique sur Heroku.
+- **`.gitignore`** : Fichier qui spécifie les fichiers et dossiers à ignorer par Git (comme `__pycache__`, fichiers temporaires, etc.).
+- **`00_Exploration_et_1ères_modélisations.ipynb`** : Notebook Jupyter contenant l'exploration initiale des données et les premières modélisations.
+- **`01_Feature_Engineering.ipynb`** : Notebook pour la création et la transformation des caractéristiques à partir des données brutes.
+- **`02_Feature_Selection.ipynb`** : Notebook pour la sélection des caractéristiques les plus pertinentes pour le modèle.
+- **`03_Nouvelle_modelisation.ipynb`** : Notebook pour une nouvelle tentative de modélisation basée sur les caractéristiques sélectionnées.
+- **`04_Evidently.ipynb`** : Notebook utilisant l'outil Evidently AI pour la détection de la dérive des données.
+- **`05_Nouvelle_modelisation_sans_drift.ipynb`** : Notebook pour la modélisation après suppression des caractéristiques affectées par la dérive des données.
+- **`Procfile`** : Fichier utilisé par Heroku pour définir comment exécuter l'application.
+- **`credit_scoring_new.joblib`** : Fichier de modèle entraîné, sauvegardé avec Joblib pour une utilisation ultérieure.
+- **`data_drift_report_all.html`** : Rapport complet de dérive des données généré par Evidently AI.
+- **`data_drift_report_short.html`** : Rapport de dérive des données sur une sélection de variables, également généré par Evidently AI.
+- **`main.py`** : Script principal pour exécuter l'API FastAPI.
+- **`optimal_threshold.txt`** : Fichier texte contenant le seuil optimal de décision pour le modèle de scoring de crédit.
+- **`reconstituted_test_sampled.csv`** : Jeu de données de test échantillonné pour les prédictions et l'évaluation du modèle.
+- **`requirements.txt`** : Liste des dépendances Python nécessaires à l'exécution du projet.
+- **`schéma_tables.png`** : Schéma représentant la structure des tables de données utilisées dans le projet.
+- **`script_streamlit.py`** : Script pour exécuter l'interface utilisateur basée sur Streamlit.
+- **`test_api.ipynb`** : Notebook pour tester l'API en envoyant des requêtes et en examinant les réponses.
+- **`to_merge.ipynb`** : Notebook pour fusionner tous mes notebooks en un seul (demandé pour l'évaluation).
+- **`unit_testing.py`** : Script contenant des tests unitaires pour vérifier la fonctionnalité des différents composants du projet.
+
 
 ## Installation
 
