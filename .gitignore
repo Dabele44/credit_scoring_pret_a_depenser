@@ -12,6 +12,7 @@
 
 # Sauf ce fichier spécifique
 !reconstituted_test_sampled.csv
+!shap_values.csv
 
 **/*.xlsx
 **/*.docx
