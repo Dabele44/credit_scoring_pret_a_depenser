@@ -13,10 +13,9 @@ test_data = pd.read_csv(data_path, index_col=False)
 list_id_client = test_data.SK_ID_CURR.to_list()
 
 # Chargement du dataset initial
-initial_data_path = 'application_test.csv'
+initial_data_path = 'application_test_sampled.csv'
 initial_test_data = pd.read_csv(initial_data_path)
-initial_test_data_reduced = initial_test_data[initial_test_data['SK_ID_CURR'].isin(list_id_client)]
-initial_test_data_reduced = initial_test_data_reduced[['SK_ID_CURR',
+initial_test_data_reduced = initial_test_data[['SK_ID_CURR',
     'CODE_GENDER',
     'DAYS_BIRTH',
     'NAME_FAMILY_STATUS',
@@ -99,7 +98,6 @@ def compare_global_local(selected_data, shap_values_local):
     </div>
     """, unsafe_allow_html=True)
 
-
 # Fonction pour interroger l'API pour les prédictions
 def get_predictions_from_api(input_data, api_url="https://scorecredit-93521a3704b4.herokuapp.com/predict"):
     response = requests.post(api_url, json={"data": input_data})
@@ -134,7 +132,6 @@ with open('optimal_threshold.txt', 'r') as f:
 
 # Interface Streamlit
 st.sidebar.image("bannière.png", use_column_width=True)  # Ajout de la bannière en haut de la sidebar
-
 
 # Changement de la couleur de fond de la sidebar et la police en blanc
 st.markdown(
@@ -200,6 +197,13 @@ st.markdown(
         margin-top: 20px;
         margin-bottom: 10px;
     }
+    .bivariate-title {
+        font-size: 32px;  /* Set intermediate size */
+        color: #333333;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -207,7 +211,6 @@ st.markdown(
 
 # Ajout du titre "Credit Scoring" avec la classe personnalisée
 st.markdown('<div class="custom-title"> CREDIT SCORING </div>', unsafe_allow_html=True)
-
 
 # Contenu de la sidebar
 with st.sidebar:
@@ -250,7 +253,7 @@ with st.sidebar:
 
     # Cases à cocher pour les pages
     show_page1 = st.checkbox("Customer Information", value=True)
-    show_page2 = st.checkbox("Customer Information Analysis")
+    show_page2 = st.checkbox("Feature Visualization")
     show_page3 = st.checkbox("Decision")
 
 # Si l'ID est valide, exécuter le reste du code en fonction des cases cochées
@@ -295,11 +298,103 @@ if valid_id:
         else:
             st.write("No information available for the selected customer.")
 
-    if show_page2:
-        st.markdown('<div class="section-title">Customer Information Analysis :</div>', unsafe_allow_html=True)
-        
-        # Placeholder pour l'analyse des informations du client
-        st.write("Analyse des informations du client ici...")
+if show_page2:
+    st.markdown('<div class="section-title">Feature Visualization :</div>', unsafe_allow_html=True)
+
+    # Exclure 'SK_ID_CURR' de la liste déroulante
+    selectable_columns = [col for col in initial_test_data_reduced.columns if col != 'SK_ID_CURR']
+
+    # Sélection de la première variable
+    selected_variable = st.selectbox(
+        "Select a variable to visualize the distribution:",
+        options=selectable_columns,
+        index=0  # Sélectionne la première variable par défaut
+    )
+
+    # Vérification si la variable sélectionnée est numérique ou catégorielle
+    if pd.api.types.is_numeric_dtype(initial_test_data_reduced[selected_variable]):
+        # Graphique pour les variables numériques (histogramme)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.hist(initial_test_data_reduced[selected_variable], bins=30, color='#ff8c00', alpha=0.7, label='All Customers')
+
+        # Ajouter la position du client sélectionné
+        client_value = selected_initial_data[selected_variable].values[0]
+        ax.axvline(client_value, color='green', linestyle='dashed', linewidth=2, label=f'Selected Customer ({client_value})')
+
+        ax.set_title(f'Distribution of {selected_variable}')
+        ax.set_xlabel(selected_variable)
+        ax.set_ylabel('Frequency')
+        ax.legend()
+
+        st.pyplot(fig)
+
+    else:
+        # Graphique pour les variables catégorielles (diagramme à barres)
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        # Comptage des occurrences de chaque catégorie
+        value_counts = initial_test_data_reduced[selected_variable].value_counts()
+
+        # Affichage du diagramme à barres pour toutes les catégories
+        ax.bar(value_counts.index, value_counts.values, color='#ff8c00', alpha=0.7)
+
+        ax.set_title(f'Distribution of {selected_variable}')
+        ax.set_xlabel(selected_variable)
+        ax.set_ylabel('Count')
+
+        # Rotation des étiquettes de l'axe X
+        plt.xticks(rotation=45)
+
+        st.pyplot(fig)
+
+        # Afficher la valeur de la catégorie pour l'individu sélectionné en dehors du graphique
+        client_value = selected_initial_data[selected_variable].values[0]
+        st.markdown(f"<p style='color: grey;'>Selected Customer's {selected_variable}: <strong>{client_value}</strong></p>", unsafe_allow_html=True)
+
+    # Sélection des deux variables pour l'analyse bivariée
+    st.markdown('<div class="bivariate-title">Bivariate Analysis:</div>', unsafe_allow_html=True)
+    
+    variable1 = st.selectbox("Select the first variable for bivariate analysis", options=selectable_columns, index=0)
+    variable2 = st.selectbox("Select the second variable for bivariate analysis", options=selectable_columns, index=1)
+
+    # Vérification des types des variables sélectionnées
+    if pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
+        # Graphique de dispersion pour deux variables numériques
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.scatter(initial_test_data_reduced[variable1], initial_test_data_reduced[variable2], color='#ff8c00', alpha=0.6, label='All Customers')
+
+        # Ajouter la position du client sélectionné
+        client_value1 = selected_initial_data[variable1].values[0]
+        client_value2 = selected_initial_data[variable2].values[0]
+        ax.scatter(client_value1, client_value2, color='green', s=100, label=f'Selected Customer ({client_value1}, {client_value2})')
+
+        ax.set_title(f'{variable1} vs {variable2}')
+        ax.set_xlabel(variable1)
+        ax.set_ylabel(variable2)
+        ax.legend()
+
+        st.pyplot(fig)
+
+    elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
+        # Graphique en boîte (boxplot) pour une variable numérique et une variable catégorielle (without customer indication)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        initial_test_data_reduced.boxplot(column=variable1, by=variable2, ax=ax, grid=False, color='#ff8c00')
+        ax.set_title(f'{variable1} distribution by {variable2}')
+        ax.set_xlabel(variable2)
+        ax.set_ylabel(variable1)
+        st.pyplot(fig)
+
+    elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]):
+        # Inverser les rôles des variables si la deuxième est numérique et la première catégorielle (without customer indication)
+        fig, ax = plt.subplots(figsize=(10, 6))
+        initial_test_data_reduced.boxplot(column=variable2, by=variable1, ax=ax, grid=False, color='#ff8c00')
+        ax.set_title(f'{variable2} distribution by {variable1}')
+        ax.set_xlabel(variable1)
+        ax.set_ylabel(variable2)
+        st.pyplot(fig)
+
+    else:
+        st.write("Bivariate analysis is only available for at least one numerical variable.")
 
     if show_page3:
         st.markdown('<div class="section-title">Decision :</div>', unsafe_allow_html=True)
