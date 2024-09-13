@@ -58,7 +58,7 @@ def explain(input_data: InputData):
         # Et retourne les valeurs SHAP pour la classe positive
         explanation = shap_values[1].tolist()  
         
-        return {"shap_values": explanation, "base_value": base_value}
+        return {"shap_values": explanation}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

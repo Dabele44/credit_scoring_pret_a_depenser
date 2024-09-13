@@ -127,7 +127,7 @@ def display_shap_values(input_data, shap_values):
     # On suppose que shap_values est une liste contenant les valeurs SHAP pour chaque feature
     plt.figure(figsize=(25, 10))
     shap.waterfall_plot(shap.Explanation(values=np.array(shap_values[0]),
-                                         base_values=base_value,  # Base value is not fournie par l'API, set to 0
+                                         base_values=0,  # Base value is not fournie par l'API, set to 0
                                          data=input_data.iloc[0],
                                          feature_names=input_data.columns.tolist()), show=False)
     st.pyplot(plt, clear_figure=True)
