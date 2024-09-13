@@ -7,6 +7,12 @@ import shap
 import streamlit.components.v1 as components
 import numpy as np 
 
+# Définition de la langue de la page en utilisant une balise HTML
+st.markdown("""
+    <html lang="en">
+    </html>
+    """, unsafe_allow_html=True)
+
 # Chargement des données de test reconstituées
 data_path = 'reconstituted_test_sampled.csv'
 test_data = pd.read_csv(data_path, index_col=False)
@@ -37,13 +43,13 @@ global_importance = pd.read_csv('global_feature_importance.csv')
 
 # Fonction pour comparer les importances locales et globales, limitée aux 10 variables les plus importantes
 def compare_global_local(selected_data, shap_values_local):
-    # Extraire les valeurs SHAP locales
-    local_shap_values = np.abs(np.array(shap_values_local[0]))  # Garder seulement les valeurs absolues des SHAP locales
+    # Exctraction des valeurs SHAP locales
+    local_shap_values = np.abs(np.array(shap_values_local[0]))  # On garde seulement les valeurs absolues des SHAP locales
 
-    # Utiliser les valeurs SHAP globales (déjà en absolu)
+    # Utilisation des valeurs SHAP globales (déjà en absolu)
     global_importance_sorted = global_importance.set_index('Feature').reindex(selected_data.columns).reset_index()
 
-    # Créer un DataFrame pour la comparaison
+    # Création d'un DataFrame pour la comparaison
     feature_importance_df = pd.DataFrame({
         'Feature': selected_data.columns,
         'Local Importance (Abs)': local_shap_values,  # Valeurs locales en absolu pour les comparer correctement
@@ -55,7 +61,7 @@ def compare_global_local(selected_data, shap_values_local):
     feature_importance_df = feature_importance_df.head(10)
 
     # Affichage de texte avant le graphique comparatif
-    st.markdown("<div style='color: #555;'>The following graph compares the magnitude of feature importance at two levels: global (for all clients) and local (for a specific client).</div>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #555;'>The following graph compares the magnitude of feature importance at two levels: global (for all clients) and local (for a specific client).</p>", unsafe_allow_html=True)
 
     # Affichage du graphique comparatif avec décalage entre local et global
     fig, ax = plt.subplots(figsize=(10, 8))
@@ -64,14 +70,14 @@ def compare_global_local(selected_data, shap_values_local):
     bar_width = 0.4
     y_pos = np.arange(len(feature_importance_df['Feature']))
 
-    # Dessiner les barres globales et locales avec un décalage
+    # Dessin des barres globales et locales avec un décalage
     ax.barh(y_pos, feature_importance_df['Global Importance (Abs)'], bar_width, color='#006d5b', alpha=0.6, label='Global Importance (Abs)')
     ax.barh(y_pos + bar_width, feature_importance_df['Local Importance (Abs)'], bar_width, color='#ff8c00', alpha=0.6, label='Local Importance (Abs)')
 
-    # Ajouter les labels et inverser l'axe Y
+    # Ajout des labels et inverser l'axe Y
     ax.set_yticks(y_pos + bar_width / 2)
     ax.set_yticklabels(feature_importance_df['Feature'])
-    ax.invert_yaxis()  # Inverser l'ordre pour que la feature la plus importante soit en haut
+    ax.invert_yaxis()  # Inversion de l'ordre pour que la feature la plus importante soit en haut
     ax.set_xlabel('Importance (Absolute)')
     ax.set_title('Comparison of Top 10 Local and Global Feature Importances (Absolute Values)')
     ax.legend()
@@ -80,7 +86,7 @@ def compare_global_local(selected_data, shap_values_local):
 
     # Explication après le graphique
     st.markdown("""
-    <div style='color: #555;'>
+    <p style='color: #555;'>
     Here’s how to interpret it:
     
     **Vertical axis (Features):**
@@ -95,7 +101,7 @@ def compare_global_local(selected_data, shap_values_local):
     **Yellow bars (Local Importance - Absolute):**
     The yellow bars show the absolute impact of the feature on the prediction for the selected client.
     
-    </div>
+    </p>
     """, unsafe_allow_html=True)
 
 # Fonction pour interroger l'API pour les prédictions
@@ -121,7 +127,7 @@ def display_shap_values(input_data, shap_values):
     # On suppose que shap_values est une liste contenant les valeurs SHAP pour chaque feature
     plt.figure(figsize=(25, 10))
     shap.waterfall_plot(shap.Explanation(values=np.array(shap_values[0]),
-                                         base_values=0,  # Base value is not fournie par l'API, set to 0
+                                         base_values=base_value,  # Base value is not fournie par l'API, set to 0
                                          data=input_data.iloc[0],
                                          feature_names=input_data.columns.tolist()), show=False)
     st.pyplot(plt, clear_figure=True)
@@ -131,7 +137,20 @@ with open('optimal_threshold.txt', 'r') as f:
     optimal_threshold = float(f.read().strip())
 
 # Interface Streamlit
-st.sidebar.image("bannière.png", use_column_width=True)  # Ajout de la bannière en haut de la sidebar
+st.sidebar.image("bannière.png", use_column_width=True, caption="Banner representing credit scoring application")
+
+# Ajout du focus visuel pour améliorer l'accessibilité clavier
+st.markdown(
+    """
+    <style>
+    /* Ajoute un contour visible pour les éléments en focus */
+    input:focus, select:focus, button:focus {
+        outline: 2px solid #ff8c00;  /* Couleur visible lors du focus */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # Changement de la couleur de fond de la sidebar et la police en blanc
 st.markdown(
@@ -210,12 +229,12 @@ st.markdown(
 )
 
 # Ajout du titre "Credit Scoring" avec la classe personnalisée
-st.markdown('<div class="custom-title"> CREDIT SCORING </div>', unsafe_allow_html=True)
+st.markdown('<h1 class="custom-title">CREDIT SCORING</h1>', unsafe_allow_html=True)
 
 # Contenu de la sidebar
 with st.sidebar:
     # Ajout du titre en majuscules
-    st.markdown("<div class='sidebar-title'>CHOOSE CUSTOMER ID</div>", unsafe_allow_html=True)
+    st.markdown("<h2 class='sidebar-title'>CHOOSE CUSTOMER ID</h2>", unsafe_allow_html=True)
 
     # Sélection de la méthode d'entrée
     input_method = st.radio("Choose input method:", ('Selectbox', 'Text Input'))
@@ -248,7 +267,7 @@ with st.sidebar:
     st.markdown("---")  # Séparation visuelle entre "CHOOSE CUSTOMER ID" et "MENU"
 
     # Menu de sélection des pages avec un titre et une phrase explicative
-    st.markdown("<div class='sidebar-title'>MENU</div>", unsafe_allow_html=True)
+    st.markdown("<h3 class='sidebar-title'>MENU</h3>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 16px;'>Tick the page you want to see</p>", unsafe_allow_html=True)
 
     # Cases à cocher pour les pages
@@ -270,7 +289,7 @@ if valid_id:
     selected_initial_data.reset_index(drop=True, inplace=True)
 
     if show_page1:
-        st.markdown('<div class="section-title">Customer Information :</div>', unsafe_allow_html=True)
+        st.markdown('<h2 class="section-title">Customer Information :</h2>', unsafe_allow_html=True)
         # Affichage des informations client
        
         if not selected_initial_data.empty:
@@ -299,7 +318,7 @@ if valid_id:
             st.write("No information available for the selected customer.")
 
 if show_page2:
-    st.markdown('<div class="section-title">Feature Visualization :</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Feature Visualization :</h2>', unsafe_allow_html=True)
 
     # Exclure 'SK_ID_CURR' de la liste déroulante
     selectable_columns = [col for col in initial_test_data_reduced.columns if col != 'SK_ID_CURR']
@@ -311,51 +330,60 @@ if show_page2:
         index=0  # Sélectionne la première variable par défaut
     )
 
-    # Vérification si la variable sélectionnée est numérique ou catégorielle
-    if pd.api.types.is_numeric_dtype(initial_test_data_reduced[selected_variable]):
-        # Graphique pour les variables numériques (histogramme)
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.hist(initial_test_data_reduced[selected_variable], bins=30, color='#ff8c00', alpha=0.7, label='All Customers')
+    # Ajouter une description textuelle avant le graphique pour l'accessibilité
+    st.markdown(f"<p style='color: grey;'>The following graph shows the distribution of {selected_variable} for all customers and highlights the value for the selected customer.</p>", unsafe_allow_html=True)
 
-        # Ajouter la position du client sélectionné
-        client_value = selected_initial_data[selected_variable].values[0]
-        ax.axvline(client_value, color='green', linestyle='dashed', linewidth=2, label=f'Selected Customer ({client_value})')
+    if valid_id and not selected_initial_data.empty:
+        # Vérification si la variable sélectionnée est numérique ou catégorielle
+        if pd.api.types.is_numeric_dtype(initial_test_data_reduced[selected_variable]):
+            # Graphique pour les variables numériques (histogramme)
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.hist(initial_test_data_reduced[selected_variable], bins=30, color='#ff8c00', alpha=0.7, label='All Customers')
 
-        ax.set_title(f'Distribution of {selected_variable}')
-        ax.set_xlabel(selected_variable)
-        ax.set_ylabel('Frequency')
-        ax.legend()
+            # Ajouter la position du client sélectionné
+            client_value = selected_initial_data[selected_variable].values[0]
+            ax.axvline(client_value, color='green', linestyle='dashed', linewidth=2, label=f'Selected Customer ({client_value})')
 
-        st.pyplot(fig)
+            ax.set_title(f'Distribution of {selected_variable}')
+            ax.set_xlabel(selected_variable)
+            ax.set_ylabel('Frequency')
+            ax.legend()
 
+            st.pyplot(fig)
+
+        else:
+            # Graphique pour les variables catégorielles (diagramme à barres)
+            fig, ax = plt.subplots(figsize=(10, 6))
+
+            # Comptage des occurrences de chaque catégorie
+            value_counts = initial_test_data_reduced[selected_variable].value_counts()
+
+            # Affichage du diagramme à barres pour toutes les catégories
+            ax.bar(value_counts.index, value_counts.values, color='#ff8c00', alpha=0.7)
+
+            ax.set_title(f'Distribution of {selected_variable}')
+            ax.set_xlabel(selected_variable)
+            ax.set_ylabel('Count')
+
+            # Rotation des étiquettes de l'axe X
+            plt.xticks(rotation=45)
+
+            st.pyplot(fig)
+
+            # Afficher la valeur de la catégorie pour l'individu sélectionné en dehors du graphique
+            client_value = selected_initial_data[selected_variable].values[0]
+            st.markdown(f"<p style='color: #555;'>Selected Customer's {selected_variable}: <strong>{client_value}</strong></p>", unsafe_allow_html=True)
     else:
-        # Graphique pour les variables catégorielles (diagramme à barres)
-        fig, ax = plt.subplots(figsize=(10, 6))
-
-        # Comptage des occurrences de chaque catégorie
-        value_counts = initial_test_data_reduced[selected_variable].value_counts()
-
-        # Affichage du diagramme à barres pour toutes les catégories
-        ax.bar(value_counts.index, value_counts.values, color='#ff8c00', alpha=0.7)
-
-        ax.set_title(f'Distribution of {selected_variable}')
-        ax.set_xlabel(selected_variable)
-        ax.set_ylabel('Count')
-
-        # Rotation des étiquettes de l'axe X
-        plt.xticks(rotation=45)
-
-        st.pyplot(fig)
-
-        # Afficher la valeur de la catégorie pour l'individu sélectionné en dehors du graphique
-        client_value = selected_initial_data[selected_variable].values[0]
-        st.markdown(f"<p style='color: #555;'>Selected Customer's {selected_variable}: <strong>{client_value}</strong></p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:red;'>Please select a valid customer ID before proceeding with visualization.</p>", unsafe_allow_html=True)
 
     # Sélection des deux variables pour l'analyse bivariée
-    st.markdown('<div class="bivariate-title">Bivariate Analysis:</div>', unsafe_allow_html=True)
+    st.markdown('<h3 class="bivariate-title">Bivariate Analysis:</h3>', unsafe_allow_html=True)
     
     variable1 = st.selectbox("Select the first variable for bivariate analysis", options=selectable_columns, index=0)
     variable2 = st.selectbox("Select the second variable for bivariate analysis", options=selectable_columns, index=1)
+
+    # Ajouter une description textuelle avant le graphique pour l'accessibilité
+    st.markdown(f"<p style='color: grey;'>The following graph shows the relationship between {variable1} and {variable2} for all customers.</p>", unsafe_allow_html=True)
 
     # Vérification des types des variables sélectionnées
     if pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
@@ -397,79 +425,81 @@ if show_page2:
         st.write("Bivariate analysis is only available for at least one numerical variable.")
 
     if show_page3:
-        st.markdown('<div class="section-title">Decision :</div>', unsafe_allow_html=True)
+        if valid_id and not selected_data.empty:
+            st.markdown('<h2 class="section-title">Decision :</h2>', unsafe_allow_html=True)
 
-        # Interroger l'API pour les prédictions
-        api_response = get_predictions_from_api(selected_data.to_dict(orient='records'))
+            # Interroger l'API pour les prédictions
+            api_response = get_predictions_from_api(selected_data.to_dict(orient='records'))
 
-        if api_response is not None:
-            prediction_proba = api_response['probability'][0]
-            prediction = api_response['prediction'][0]
+            if api_response is not None:
+                prediction_proba = api_response['probability'][0]
+                prediction = api_response['prediction'][0]
 
-            # Affichage du texte coloré en fonction de la prédiction
-            if prediction == 0:
-                st.markdown("<div class='accepted-text'>- ACCEPTED -</div>", unsafe_allow_html=True)
+                # Affichage du texte coloré en fonction de la prédiction
+                if prediction == 0:
+                    st.markdown("<div class='accepted-text'>- ACCEPTED -</div>", unsafe_allow_html=True)
+                else:
+                    st.markdown("<div class='rejected-text'>- REJECTED -</div>", unsafe_allow_html=True)
+
+                # Séparation par une ligne
+                st.markdown("---")
+
+                # Ajout d'un titre centré pour "Prediction Probability :"
+                st.markdown("<h3 class='centered-text'>Risk Probability :</h3>", unsafe_allow_html=True)
+                st.markdown("<p class='risk-text'>If the customer obtains a score < 0.91, we consider him to be risky (red line)</p>", unsafe_allow_html=True)
+
+                # Affichage des résultats sous forme de jauge
+                fig = go.Figure(go.Indicator(
+                    mode="gauge+number+delta",
+                    value=1-prediction_proba,
+                    domain={'x': [0, 1], 'y': [0, 1]},
+                    delta={'reference': 0.91},
+                    gauge={
+                        'axis': {'range': [0, 1]},
+                        'steps': [
+                            {'range': [0, 1], 'color': "lightgray"},
+                            {'range': [1, 1], 'color': "gray"}
+                        ],  # Correct format for steps
+                        'bar': {'color': "#1f77b4"},  # Couleur personnalisée pour la barre
+                        'threshold': {
+                            'line': {'color': "red", 'width': 10},
+                            'thickness': 0.75,
+                            'value': 0.91
+                        }
+                    },
+                    title={'text': "", 'font': {'size': 14}}  # On ne met pas de titre ici car il est ajouté manuellement
+                ))
+
+                fig.update_layout(height=450)  # Réduire la hauteur de la jauge
+                st.plotly_chart(fig, use_container_width=True)
+
+                # Séparation par une ligne
+                st.markdown("---")
+
+                st.markdown("<h3 class='centered-text'>Features entering in the model :</h3>", unsafe_allow_html=True)
+                st.markdown("<p class='risk-text'>Here are the features for the selected customer (Use the horizontal scrollbar to see all the features) :</p>", unsafe_allow_html=True)
+
+                st.dataframe(selected_data.reset_index(drop=True), use_container_width=True)
+
+                # Séparation par une ligne
+                st.markdown("---")
+
+                # Obtenir les valeurs SHAP depuis l'API et les afficher
+                shap_values = get_shap_values_from_api(selected_data.to_dict(orient='records'))
+                if shap_values is not None:
+                    st.markdown("<h3 class='centered-text'>Feature Importance for this prediction :</h3>", unsafe_allow_html=True)
+                    st.markdown("<p class='risk-text'>This graph shows how each feature influenced the model's decision for the selected customer. Features that push the result to the right increase the likelihood of a high-risk prediction, while those that push it to the left reduce the risk.</p>", unsafe_allow_html=True)
+
+                    display_shap_values(selected_data, shap_values)
+
+                    # Add spacing before the comparative graph
+                    st.markdown("<br><br>", unsafe_allow_html=True)
+
+                    # Comparer les valeurs SHAP locales et globales
+                    compare_global_local(selected_data, shap_values)
+                else:
+                    st.write("Error when retrieving SHAP values.")
             else:
-                st.markdown("<div class='rejected-text'>- REJECTED -</div>", unsafe_allow_html=True)
-
-            # Séparation par une ligne
-            st.markdown("---")
-
-            # Ajout d'un titre centré pour "Prediction Probability :"
-            st.markdown("<div class='centered-text'>Risk Probability :</div>", unsafe_allow_html=True)
-            st.markdown("<div class='risk-text'>If the customer obtains a score < 0.91, we consider him to be risky (red line)</div>", unsafe_allow_html=True)
-
-            # Affichage des résultats sous forme de jauge
-            fig = go.Figure(go.Indicator(
-                mode="gauge+number+delta",
-                value=1-prediction_proba,
-                domain={'x': [0, 1], 'y': [0, 1]},
-                delta={'reference': 0.91},
-                gauge={
-                    'axis': {'range': [0, 1]},
-                    'steps': [
-                        {'range': [0, 1], 'color': "lightgray"},
-                        {'range': [1, 1], 'color': "gray"}
-                    ],  # Correct format for steps
-                    'bar': {'color': "#1f77b4"},  # Couleur personnalisée pour la barre
-                    'threshold': {
-                        'line': {'color': "red", 'width': 10},
-                        'thickness': 0.75,
-                        'value': 0.91
-                    }
-                },
-                title={'text': "", 'font': {'size': 14}}  # On ne met pas de titre ici car il est ajouté manuellement
-            ))
-
-            fig.update_layout(height=450)  # Réduire la hauteur de la jauge
-            st.plotly_chart(fig, use_container_width=True)
-
-            # Séparation par une ligne
-            st.markdown("---")
-
-            st.markdown("<div class='centered-text'>Features entering in the model :</div>", unsafe_allow_html=True)
-            st.markdown("<div class='risk-text'>Here are the features for the selected customer (Use the horizontal scrollbar to see all the features) :</div>", unsafe_allow_html=True)
-
-            st.dataframe(selected_data.reset_index(drop=True), use_container_width=True)
-
-
-            # Séparation par une ligne
-            st.markdown("---")
-
-            # Obtenir les valeurs SHAP depuis l'API et les afficher
-            shap_values = get_shap_values_from_api(selected_data.to_dict(orient='records'))
-            if shap_values is not None:
-                st.markdown("<div class='centered-text'>Feature Importance for this prediction :</div>", unsafe_allow_html=True)
-                st.markdown("<div class='risk-text'>This graph shows how each feature influenced the model's decision for the selected customer. Features that push the result to the right increase the likelihood of a high-risk prediction, while those that push it to the left reduce the risk.</div>", unsafe_allow_html=True)
-
-                display_shap_values(selected_data, shap_values)
-
-                # Add spacing before the comparative graph
-                st.markdown("<br><br>", unsafe_allow_html=True)
-
-                # Comparer les valeurs SHAP locales et globales
-                compare_global_local(selected_data, shap_values)
-            else:
-                st.write("Error when retrieving SHAP values.")
+                st.write("Error when retrieving predictions.")
         else:
-            st.write("Error when retrieving predictions.")
+            st.markdown("<p style='color:red;'>Please select a valid customer ID before proceeding with the decision analysis.</p>", unsafe_allow_html=True)
