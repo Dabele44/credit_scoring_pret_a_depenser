@@ -281,6 +281,7 @@ if valid_id:
     # Affichage de l'ID du client sous le titre, en petit
     st.markdown(f'<p style="text-align:center; font-size:16px; color:#555;">Customer ID: {selected_id}</p>', unsafe_allow_html=True)
 
+    # Toujours récupérer les données sélectionnées indépendamment des pages cochées
     selected_data = test_data[test_data['SK_ID_CURR'] == selected_id].iloc[:, 1:].copy()
     selected_data.reset_index(drop=True, inplace=True)
 
@@ -288,21 +289,16 @@ if valid_id:
     selected_initial_data = initial_test_data_reduced[initial_test_data_reduced['SK_ID_CURR'] == selected_id]
     selected_initial_data.reset_index(drop=True, inplace=True)
 
+    # Page 1 : Afficher les informations du client si "Customer Information" est coché
     if show_page1:
         st.markdown('<h2 class="section-title">Customer Information :</h2>', unsafe_allow_html=True)
         # Affichage des informations client
        
         if not selected_initial_data.empty:
-            # Affichage des informations une par une
             customer_info = selected_initial_data.iloc[0]  # Sélectionne la première ligne (l'unique client)
-
-            # Récupération du numéro de l'ID client
-            customer_id = customer_info['SK_ID_CURR']
-
-            # Affichage de la phrase avec le numéro d'ID du client
-            st.write(f"Here are the details for this customer :")
-
             
+            # Affichage des informations une par une
+            st.write(f"Here are the details for this customer :")
             st.markdown(f"**Gender**: {customer_info['CODE_GENDER']}")
             st.markdown(f"**Family Status**: {customer_info['NAME_FAMILY_STATUS']}")
             st.markdown(f"**Number of Children**: {customer_info['CNT_CHILDREN']}")
@@ -317,185 +313,128 @@ if valid_id:
         else:
             st.write("No information available for the selected customer.")
 
-if show_page2:
-    st.markdown('<h2 class="section-title">Feature Visualization :</h2>', unsafe_allow_html=True)
+    # Page 2 : Afficher la visualisation des features si "Feature Visualization" est coché
+    if show_page2:
+        st.markdown('<h2 class="section-title">Feature Visualization :</h2>', unsafe_allow_html=True)
 
-    # Exclusion de 'SK_ID_CURR' de la liste déroulante
-    selectable_columns = [col for col in initial_test_data_reduced.columns if col != 'SK_ID_CURR']
+        # Exclusion de 'SK_ID_CURR' de la liste déroulante
+        selectable_columns = [col for col in initial_test_data_reduced.columns if col != 'SK_ID_CURR']
 
-    # Sélection de la première variable
-    selected_variable = st.selectbox(
-        "Select a variable to visualize the distribution:",
-        options=selectable_columns,
-        index=0  # Sélectionne la première variable par défaut
-    )
+        # Sélection de la première variable
+        selected_variable = st.selectbox(
+            "Select a variable to visualize the distribution:",
+            options=selectable_columns,
+            index=0  # Sélectionne la première variable par défaut
+        )
 
-    # Ajout d'une description textuelle avant le graphique pour l'accessibilité
-    st.markdown(f"<p style='color: grey;'>The following graph shows the distribution of {selected_variable} for all customers and highlights the value for the selected customer.</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: grey;'>The following graph shows the distribution of {selected_variable} for all customers and highlights the value for the selected customer.</p>", unsafe_allow_html=True)
 
-    if valid_id and not selected_initial_data.empty:
-        # Vérification si la variable sélectionnée est numérique ou catégorielle
-        if pd.api.types.is_numeric_dtype(initial_test_data_reduced[selected_variable]):
-            # Graphique pour les variables numériques (histogramme)
+        if not selected_initial_data.empty:
+            if pd.api.types.is_numeric_dtype(initial_test_data_reduced[selected_variable]):
+                fig, ax = plt.subplots(figsize=(10, 6))
+                ax.hist(initial_test_data_reduced[selected_variable], bins=30, color='#ff8c00', alpha=0.7, label='All Customers')
+                client_value = selected_initial_data[selected_variable].values[0]
+                ax.axvline(client_value, color='green', linestyle='dashed', linewidth=2, label=f'Selected Customer ({client_value})')
+                ax.set_title(f'Distribution of {selected_variable}')
+                ax.set_xlabel(selected_variable)
+                ax.set_ylabel('Frequency')
+                ax.legend()
+                st.pyplot(fig)
+            else:
+                fig, ax = plt.subplots(figsize=(10, 6))
+                value_counts = initial_test_data_reduced[selected_variable].value_counts()
+                ax.bar(value_counts.index, value_counts.values, color='#ff8c00', alpha=0.7)
+                ax.set_title(f'Distribution of {selected_variable}')
+                ax.set_xlabel(selected_variable)
+                ax.set_ylabel('Count')
+                plt.xticks(rotation=45)
+                st.pyplot(fig)
+                client_value = selected_initial_data[selected_variable].values[0]
+                st.markdown(f"<p style='color: #555;'>Selected Customer's {selected_variable}: <strong>{client_value}</strong></p>", unsafe_allow_html=True)
+        else:
+            st.markdown("<p style='color:red;'>Please select a valid customer ID before proceeding with visualization.</p>", unsafe_allow_html=True)
+
+        # Sélection des deux variables pour l'analyse bivariée
+        st.markdown('<h3 class="bivariate-title">Bivariate Analysis:</h3>', unsafe_allow_html=True)
+
+        variable1 = st.selectbox("Select the first variable for bivariate analysis", options=selectable_columns, index=0)
+        variable2 = st.selectbox("Select the second variable for bivariate analysis", options=selectable_columns, index=1)
+
+        st.markdown(f"<p style='color: grey;'>The following graph shows the relationship between {variable1} and {variable2} for all customers.</p>", unsafe_allow_html=True)
+
+        # Vérification des types des variables sélectionnées
+        if pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.hist(initial_test_data_reduced[selected_variable], bins=30, color='#ff8c00', alpha=0.7, label='All Customers')
+            ax.scatter(initial_test_data_reduced[variable1], initial_test_data_reduced[variable2], color='#ff8c00', alpha=0.6, label='All Customers')
 
-            # Ajout de la position du client sélectionné
-            client_value = selected_initial_data[selected_variable].values[0]
-            ax.axvline(client_value, color='green', linestyle='dashed', linewidth=2, label=f'Selected Customer ({client_value})')
+            client_value1 = selected_initial_data[variable1].values[0]
+            client_value2 = selected_initial_data[variable2].values[0]
+            ax.scatter(client_value1, client_value2, color='green', s=100, label=f'Selected Customer ({client_value1}, {client_value2})')
 
-            ax.set_title(f'Distribution of {selected_variable}')
-            ax.set_xlabel(selected_variable)
-            ax.set_ylabel('Frequency')
+            ax.set_title(f'{variable1} vs {variable2}')
+            ax.set_xlabel(variable1)
+            ax.set_ylabel(variable2)
             ax.legend()
 
             st.pyplot(fig)
 
-        else:
-            # Graphique pour les variables catégorielles (diagramme à barres)
+        elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
             fig, ax = plt.subplots(figsize=(10, 6))
-
-            # Comptage des occurrences de chaque catégorie
-            value_counts = initial_test_data_reduced[selected_variable].value_counts()
-
-            # Affichage du diagramme à barres pour toutes les catégories
-            ax.bar(value_counts.index, value_counts.values, color='#ff8c00', alpha=0.7)
-
-            ax.set_title(f'Distribution of {selected_variable}')
-            ax.set_xlabel(selected_variable)
-            ax.set_ylabel('Count')
-
-            # Rotation des étiquettes de l'axe X
-            plt.xticks(rotation=45)
-
+            initial_test_data_reduced.boxplot(column=variable1, by=variable2, ax=ax, grid=False)
+            ax.set_title(f'{variable1} distribution by {variable2}')
+            ax.set_xlabel(variable2)
+            ax.set_ylabel(variable1)
             st.pyplot(fig)
 
-            # Affichage de la valeur de la catégorie pour l'individu sélectionné en dehors du graphique
-            client_value = selected_initial_data[selected_variable].values[0]
-            st.markdown(f"<p style='color: #555;'>Selected Customer's {selected_variable}: <strong>{client_value}</strong></p>", unsafe_allow_html=True)
-    else:
-        st.markdown("<p style='color:red;'>Please select a valid customer ID before proceeding with visualization.</p>", unsafe_allow_html=True)
+        elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]):
+            fig, ax = plt.subplots(figsize=(10, 6))
+            initial_test_data_reduced.boxplot(column=variable2, by=variable1, ax=ax, grid=False)
+            ax.set_title(f'{variable2} distribution by {variable1}')
+            ax.set_xlabel(variable1)
+            ax.set_ylabel(variable2)
+            st.pyplot(fig)
 
-    # Sélection des deux variables pour l'analyse bivariée
-    st.markdown('<h3 class="bivariate-title">Bivariate Analysis:</h3>', unsafe_allow_html=True)
-    
-    variable1 = st.selectbox("Select the first variable for bivariate analysis", options=selectable_columns, index=0)
-    variable2 = st.selectbox("Select the second variable for bivariate analysis", options=selectable_columns, index=1)
+        else:
+            st.write("Bivariate analysis is only available for at least one numerical variable.")
 
-    # Ajout d'une description textuelle avant le graphique pour l'accessibilité
-    st.markdown(f"<p style='color: grey;'>The following graph shows the relationship between {variable1} and {variable2} for all customers.</p>", unsafe_allow_html=True)
-
-    # Vérification des types des variables sélectionnées
-    if pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
-        # Graphique de dispersion pour deux variables numériques
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.scatter(initial_test_data_reduced[variable1], initial_test_data_reduced[variable2], color='#ff8c00', alpha=0.6, label='All Customers')
-
-        # Ajout de la position du client sélectionné
-        client_value1 = selected_initial_data[variable1].values[0]
-        client_value2 = selected_initial_data[variable2].values[0]
-        ax.scatter(client_value1, client_value2, color='green', s=100, label=f'Selected Customer ({client_value1}, {client_value2})')
-
-        ax.set_title(f'{variable1} vs {variable2}')
-        ax.set_xlabel(variable1)
-        ax.set_ylabel(variable2)
-        ax.legend()
-
-        st.pyplot(fig)
-
-    elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]):
-        # Boxplot pour une variable numérique et une variable catégorielle (without customer indication)
-        fig, ax = plt.subplots(figsize=(10, 6))
-        initial_test_data_reduced.boxplot(column=variable1, by=variable2, ax=ax, grid=False, color='#ff8c00')
-        ax.set_title(f'{variable1} distribution by {variable2}')
-        ax.set_xlabel(variable2)
-        ax.set_ylabel(variable1)
-        st.pyplot(fig)
-
-    elif pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable2]) and not pd.api.types.is_numeric_dtype(initial_test_data_reduced[variable1]):
-        # Inverser les rôles des variables si la deuxième est numérique et la première catégorielle (without customer indication)
-        fig, ax = plt.subplots(figsize=(10, 6))
-        initial_test_data_reduced.boxplot(column=variable2, by=variable1, ax=ax, grid=False, color='#ff8c00')
-        ax.set_title(f'{variable2} distribution by {variable1}')
-        ax.set_xlabel(variable1)
-        ax.set_ylabel(variable2)
-        st.pyplot(fig)
-
-    else:
-        st.write("Bivariate analysis is only available for at least one numerical variable.")
-
+    # Page 3 : Afficher la décision si "Decision" est coché
     if show_page3:
-        if valid_id and not selected_data.empty:
-            st.markdown('<h2 class="section-title">Decision :</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 class="section-title">Decision :</h2>', unsafe_allow_html=True)
 
-            # Interroger l'API pour les prédictions
+        if not selected_data.empty:
             api_response = get_predictions_from_api(selected_data.to_dict(orient='records'))
-
             if api_response is not None:
                 prediction_proba = api_response['probability'][0]
                 prediction = api_response['prediction'][0]
 
-                # Affichage du texte coloré en fonction de la prédiction
                 if prediction == 0:
                     st.markdown("<div class='accepted-text'>- ACCEPTED -</div>", unsafe_allow_html=True)
                 else:
                     st.markdown("<div class='rejected-text'>- REJECTED -</div>", unsafe_allow_html=True)
 
-                # Séparation par une ligne
                 st.markdown("---")
-
-                # Ajout d'un titre centré pour "Prediction Probability :"
                 st.markdown("<h3 class='centered-text'>Risk Probability :</h3>", unsafe_allow_html=True)
                 st.markdown("<p class='risk-text'>If the customer obtains a score < 0.91, we consider him to be risky (red line)</p>", unsafe_allow_html=True)
 
-                # Affichage des résultats sous forme de jauge
                 fig = go.Figure(go.Indicator(
                     mode="gauge+number+delta",
                     value=1-prediction_proba,
-                    domain={'x': [0, 1], 'y': [0, 1]},
                     delta={'reference': 0.91},
-                    gauge={
-                        'axis': {'range': [0, 1]},
-                        'steps': [
-                            {'range': [0, 1], 'color': "lightgray"},
-                            {'range': [1, 1], 'color': "gray"}
-                        ], 
-                        'bar': {'color': "#1f77b4"},  
-                        'threshold': {
-                            'line': {'color': "red", 'width': 10},
-                            'thickness': 0.75,
-                            'value': 0.91
-                        }
-                    },
-                    title={'text': "", 'font': {'size': 14}}  # On ne met pas de titre ici car il est ajouté manuellement
-                ))
-
-                fig.update_layout(height=450)  
+                    gauge={'axis': {'range': [0, 1]}, 'bar': {'color': "#1f77b4"}, 'threshold': {'line': {'color': "red", 'width': 10}, 'value': 0.91}},
+                    title={'text': "", 'font': {'size': 14}}))
+                fig.update_layout(height=450)
                 st.plotly_chart(fig, use_container_width=True)
 
-                # Séparation par une ligne
                 st.markdown("---")
-
                 st.markdown("<h3 class='centered-text'>Features entering in the model :</h3>", unsafe_allow_html=True)
-                st.markdown("<p class='risk-text'>Here are the features for the selected customer (Use the horizontal scrollbar to see all the features) :</p>", unsafe_allow_html=True)
-
                 st.dataframe(selected_data.reset_index(drop=True), use_container_width=True)
 
-                # Séparation par une ligne
                 st.markdown("---")
-
-                # Obtenir les valeurs SHAP depuis l'API et les afficher
                 shap_values = get_shap_values_from_api(selected_data.to_dict(orient='records'))
                 if shap_values is not None:
                     st.markdown("<h3 class='centered-text'>Feature Importance for this prediction :</h3>", unsafe_allow_html=True)
-                    st.markdown("<p class='risk-text'>This graph shows how each feature influenced the model's decision for the selected customer. Features that push the result to the right increase the likelihood of a high-risk prediction, while those that push it to the left reduce the risk.</p>", unsafe_allow_html=True)
-
                     display_shap_values(selected_data, shap_values)
-
-                  
                     st.markdown("<br><br>", unsafe_allow_html=True)
-
-                    # Comparer les valeurs SHAP locales et globales
                     compare_global_local(selected_data, shap_values)
                 else:
                     st.write("Error when retrieving SHAP values.")
