@@ -119,9 +119,10 @@ Vous pouvez tester l'API localement à l'aide du notebook `test_api.ipynb`. Ce n
 Pour interagir avec le modèle via une interface graphique, exécutez l'application Streamlit :
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run script_streamlit_plus_v7.py
 ```
-L'application Streamlit vous permet de visualiser les prédictions du modèle et les valeurs SHAP pour chaque client.
+L'application Streamlit vous permet de visualiser les prédictions du modèle et les valeurs SHAP pour chaque client. Cette application est déployée dans le Streamlit Community Cloud à cette adresse : https://dabele44-credit-scoring-pret-a--script-streamlit-plus-v7-ronrkx.streamlit.app/
+
 
 ## Création et évaluation du modèle
 
